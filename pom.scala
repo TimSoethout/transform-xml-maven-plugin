@@ -6,7 +6,7 @@ implicit val scalaVersion = ScalaVersion("2.11.6")
 ScalaModel(
   "nl.timmybankers.maven" % "transform-xml-maven-plugin" % "1.0-SNAPSHOT",
   name = "Transform XML Maven Plugin",
-
+  packaging= "maven-plugin",
   contributors = Seq(
     Contributor(
       name = "Tim Soethout"
