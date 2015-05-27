@@ -1,5 +1,9 @@
 #### joe made this: https://goel.io/joe
 
+## Custom
+# not needed in git because generated
+pom.xml
+
 #####=== Scala ===#####
 
 *.class
@@ -37,7 +41,8 @@ project/boot/
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
