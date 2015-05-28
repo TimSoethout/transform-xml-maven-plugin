@@ -14,6 +14,11 @@
                 <groupId>nl.timmybankers.mvn.maven</groupId>
                 <artifactId>transform-xml-maven-plugin</artifactId>
                 <version>1.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
