@@ -30,7 +30,8 @@ ScalaModel(
     "org.apache.maven.plugin-tools" % "maven-plugin-tools-api" % "3.4",
     "org.apache.maven.plugin-tools" % "maven-plugin-annotations" % "3.4",
     "org.scala-lang.modules" %% "scala-xml" % "1.0.3",
-    "org.scalesxml" %% "scales-jaxen" % "0.6.0-M3"
+    "org.scalesxml" %% "scales-jaxen" % "0.6.0-M3",
+    "org.scalatest" %% "scalatest" % "2.2.4" % "test"
   ),
   build = Build(
     plugins = Seq(

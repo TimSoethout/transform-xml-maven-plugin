@@ -1,41 +1,77 @@
 package nl.timmybankers.maven
 
-import java.io.{StringWriter, Writer, FileReader, FileWriter}
+import java.io.FileReader
+import javax.xml.parsers.{DocumentBuilderFactory, DocumentBuilder}
+import javax.xml.xpath._
 
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugins.annotations.{Mojo, Parameter}
-import scales.utils.top
+import org.w3c.dom.{Document, Node, NodeList}
+import org.xml.sax.InputSource
 import scales.xml.ScalesXml._
-import scales.xml._
-import scales.xml.jaxen.ScalesXPath
+
+//import scales.xml._
 
 @Mojo(name = "transform-xml")
 class TransformXmlMojo extends AbstractMojo {
 
-  @Parameter
+  @Parameter(property = "inputXmlPath")
   var inputXmlPath: String = null
-  @Parameter
+  @Parameter(property = "outputXmlPath")
   val outputXmlPath: String = null
-  @Parameter
-  val xpath: String = null
+//  @Parameter
+//  val xpath: String = null
   @Parameter
   val action: String = "DELETE"
 
   override def execute(): Unit = {
-    getLog.info("Starting Transform XML Maven plugin")
+    getLog.debug("Starting Transform XML Maven plugin")
 
-    val xml: Doc = loadXml(new FileReader(inputXmlPath))
+//    val xmlDoc: InputSource = new FileReader(inputXmlPath)
 
-    val path: ScalesXPath = ScalesXPath("//class[contains(@filename,'.scala')]")
+    val xpath: XPath = XPathFactory.newInstance().newXPath()
 
-//    val filter: Iterable[Either[AttributePath, XmlPath]] = path.evaluate(top(xml))
+    val factory = DocumentBuilderFactory.newInstance()
+    factory.setNamespaceAware( true );
+    val builder = factory.newDocumentBuilder();
+    builder.setEntityResolver( new BlankingResolver() );
 
-//    val output: String = asString(filter)
-//    getLog.debug(output)
-//    val writer: Writer = new FileWriter(outputXmlPath)
-//    output.writeTo(new StringWriter())
+    val xmlDoc: Document = builder.parse(inputXmlPath)
+    val pathExpr: XPathExpression = xpath.compile("//class[contains(@filename,'.scala')]");
+    //    try {
+    //      pathExpr =
+    //    } catch {
+    //      case (e: XPathExpressionException) => e.printStackTrace();
+    //    }
+    val list: NodeList = pathExpr.evaluate(xmlDoc, XPathConstants.NODESET).asInstanceOf[NodeList]
+//    try {
+//      list =
+//    } catch {
+//      case (e: XPathExpressionException) => e.printStackTrace();
+//    }
+
+    for ( i <- 0 to list.getLength) {
+      val node: Node = list.item(i)
+      getLog.debug(s"Removing node: ${node}")
+      node.getParentNode.removeChild(node)
+    }
+
+    getLog.info(xmlDoc.toString)
+
+
+    //    val xml: Doc = loadXml(new FileReader(inputXmlPath))
+
+    //    val path: ScalesXPath = ScalesXPath("//class[contains(@filename,'.scala')]")
+    //
+    //    val filter: Iterable[Either[AttributePath, XmlPath]] = path.evaluate(top(xml))
+    //
+    //    val output: String = asString(filter)
+    //    getLog.debug(output)
+    //    val writer: Writer = new FileWriter(outputXmlPath)
+    //    output.writeTo(new StringWriter())
 
 
     //    inputFile.
+    getLog.debug("Finished Transform XML Maven plugin")
   }
 }
