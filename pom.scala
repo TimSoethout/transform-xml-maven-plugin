@@ -5,7 +5,7 @@ import scala.collection.immutable.Seq
 implicit val scalaVersion = ScalaVersion("2.11.6")
 
 ScalaModel(
-  "nl.timmybankers.maven" % "transform-xml-maven-plugin" % "1.0.0",
+  "nl.timmybankers.maven" % "transform-xml-maven-plugin" % "1.0.1-SNAPSHOT",
   name = "Transform XML Maven Plugin",
   packaging = "maven-plugin",
   developers = Seq(
