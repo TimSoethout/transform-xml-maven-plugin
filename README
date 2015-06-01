@@ -1,0 +1,8 @@
+maven-plugin which can be used to transform xml as part of your build process.
+
+For now only supports deleting of xml element which conform to an xpath query.
+
+usage:
+```
+mvn nl.timmybankers.maven:transform-xml-maven-plugin:1.0-SNAPSHOT:transform-xml -DinputXmlPath="/Users/tim/workspace/api-toolkit/toolkit-http/target/site/cobertura/coverage.xml" -Dxpath="//class[contains(@filename,'.scala')]" -DoutputXmlPath=/tmp/test.xml
+```
