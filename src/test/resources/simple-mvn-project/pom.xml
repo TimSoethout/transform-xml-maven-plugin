@@ -11,7 +11,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>nl.timmybankers.mvn.maven</groupId>
+                <groupId>nl.timmybankers.maven</groupId>
                 <artifactId>transform-xml-maven-plugin</artifactId>
                 <version>1.0-SNAPSHOT</version>
                 <executions>
