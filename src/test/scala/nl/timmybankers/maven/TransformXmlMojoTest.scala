@@ -45,7 +45,7 @@ class TransformXmlMojoTest extends FlatSpec with ShouldMatchers {
 
     mojo.xpath = "//class[contains(@filename,'.scala')]"
     mojo.action = "DELETE"
-    mojo.skipIfNonExisting = true
+    mojo.skipOnFileErrors = true
 
     mojo.execute()
 
@@ -62,7 +62,7 @@ class TransformXmlMojoTest extends FlatSpec with ShouldMatchers {
 
     mojo.xpath = "//class[contains(@filename,'.scala')]"
     mojo.action = "DELETE"
-    mojo.skipIfNonExisting = false
+    mojo.skipOnFileErrors = false
 
     intercept[Exception] {
       mojo.execute()

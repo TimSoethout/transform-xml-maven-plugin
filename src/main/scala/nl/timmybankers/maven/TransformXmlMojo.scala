@@ -22,8 +22,8 @@ class TransformXmlMojo extends AbstractMojo {
   var xpath: String = null
   @Parameter(property = "action")
   var action: String = "DELETE"
-  @Parameter(property = "ignoreFileExceptions")
-  var skipIfNonExisting = false
+  @Parameter(property = "skipOnFileErrors")
+  var skipOnFileErrors = false
 
   override def execute(): Unit = {
     getLog.debug("Starting Transform XML Maven plugin")
@@ -32,7 +32,7 @@ class TransformXmlMojo extends AbstractMojo {
 
     xmlDocOption match {
       case None =>
-        if (skipIfNonExisting)
+        if (skipOnFileErrors)
           getLog.info(s"inputXmlPath `$inputXmlPath` not found. Skipping execution.")
         else throw new Exception(s"inputXmlPath `$inputXmlPath` not found. Breaking.")
       case Some(xmlDoc) =>
