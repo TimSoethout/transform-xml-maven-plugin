@@ -31,8 +31,45 @@ ScalaModel(
         configuration = Config(input = "pom.scala", output = "pom.xml"),
         executions = Seq(Execution(phase = "compile", goals = Seq("translate")))
 
+      ),
+      Plugin(
+        "org.sonatype.plugins" % "nexus-staging-maven-plugin" % "1.6.5",
+        extensions = true, configuration = Config(
+          serverId = "ossrh",
+          nexusUrl = "https://oss.sonatype.org/",
+          autoReleaseAfterClose = true)
       )
     )
+  ),
+  distributionManagement = DistributionManagement(
+    snapshotRepository =
+      DeploymentRepository(id = "ossrh",
+        url = "https://oss.sonatype.org/content/repositories/snapshots"),
+    repository = DeploymentRepository(id = "ossrh",
+      url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+  ),
+  profiles = Seq(
+    Profile(id = "release",
+      build = Build(plugins = Seq(
+        Plugin(
+          "org.apache.maven.plugins" % "maven-source-plugin" % "2.4",
+          executions = Seq(Execution(
+            id = "attach-sources",
+            goals = Seq("jar-no-fork")
+          ))),
+        Plugin(
+          "org.apache.maven.plugins" % "maven-javadoc-plugin" % "2.10.3",
+          executions = Seq(Execution(
+            id = "attach-javadocs",
+            goals = Seq("jar")))),
+        Plugin(
+          "org.apache.maven.plugins" % "maven-gpg-plugin" % "1.6",
+          executions = Seq(Execution(
+            id = "sign-artifacts",
+            phase = "verify",
+            goals = Seq("sign")
+          )))
+      )))
   ),
   modelVersion = "4.0.0"
 )
