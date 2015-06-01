@@ -19,15 +19,17 @@
                         <phase>verify</phase>
                     </execution>
                 </executions>
+                <goals>
+                    <goal>transform-xml</goal>
+                </goals>
+                <configuration>
+                    <inputXmlPath>${project.build.directory}/site/cobertura/coverage.xml</inputXmlPath>
+                    <outputXmlPath>${sonar.build.directore}/coverage-without-scala.xml</outputXmlPath>
+                    <xpath>//class[contains(@filename,'.scala')]</xpath>
+                    <action>DELETE</action>
+                    <skipOnFileErrors>true</skipOnFileErrors>
+                </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <!--<dependencies>-->
-        <!--<dependency>-->
-            <!--<groupId>nl.timmybankers.maven</groupId>-->
-            <!--<artifactId>transform-xml-maven-plugin_2.11</artifactId>-->
-            <!--<version>1.0-SNAPSHOT</version>-->
-        <!--</dependency>-->
-    <!--</dependencies>-->
 </project>
