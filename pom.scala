@@ -5,18 +5,22 @@ import scala.collection.immutable.Seq
 implicit val scalaVersion = ScalaVersion("2.11.6")
 
 ScalaModel(
-  "nl.timmybankers.maven" % "transform-xml-maven-plugin" % "1.0-SNAPSHOT",
+  "nl.timmybankers.maven" % "transform-xml-maven-plugin" % "1.0.0",
   name = "Transform XML Maven Plugin",
   packaging = "maven-plugin",
-  contributors = Seq(
-    Contributor(
+  developers = Seq(
+    Developer(
       name = "Tim Soethout"
       //      organization = "",
       //      organizationUrl = ""
     )
   ),
   description = "Maven plugin which can transform xml during the build. Currently supports deleting of nodes by xpath.",
-  scm = Scm(url = "https://github.com/TimSoethout/transform-xml-maven-plugin"),
+  url = "https://github.com/TimSoethout/transform-xml-maven-plugin",
+  scm = Scm(
+    url = "https://github.com/TimSoethout/transform-xml-maven-plugin",
+    connection = "scm:git:git://github.com/TimSoethout/transform-xml-maven-plugin"),
+  licenses = Seq(License("MIT", url = "http://opensource.org/licenses/MIT")),
   dependencies = Seq(
     "org.apache.maven.plugin-tools" % "maven-plugin-tools-api" % "3.4",
     "org.apache.maven.plugin-tools" % "maven-plugin-annotations" % "3.4",
