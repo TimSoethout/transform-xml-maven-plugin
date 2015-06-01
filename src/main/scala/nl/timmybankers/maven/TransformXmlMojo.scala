@@ -1,6 +1,6 @@
 package nl.timmybankers.maven
 
-import java.io.{FileWriter, StringWriter}
+import java.io.{File, FileWriter, StringWriter}
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
@@ -35,19 +35,21 @@ class TransformXmlMojo extends AbstractMojo {
         if (skipOnFileErrors)
           getLog.info(s"inputXmlPath `$inputXmlPath` not found. Skipping execution.")
         else throw new Exception(s"inputXmlPath `$inputXmlPath` not found. Breaking.")
-      case Some(xmlDoc) =>
-        val xpathHandler: XPath = XPathFactory.newInstance().newXPath()
-
-        val pathExpr: XPathExpression = xpathHandler.compile(xpath)
-        val list: NodeList = pathExpr.evaluate(xmlDoc, XPathConstants.NODESET).asInstanceOf[NodeList]
-
-        for (i <- 0 until list.getLength) {
-          val node: Node = list.item(i)
-          getLog.debug(s"Removing node: ${node.getNodeName}")
-          node.getParentNode.removeChild(node)
+      case Some(xmlDoc) => {
+        val pathExpr: XPathExpression = XPathFactory.newInstance().newXPath().compile(xpath)
+        val evaluate: AnyRef = pathExpr.evaluate(xmlDoc, XPathConstants.NODESET)
+        evaluate match {
+          case list: NodeList =>
+            for (i <- 0 until list.getLength) {
+              val node: Node = list.item(i)
+              getLog.debug(s"Removing node: ${node.getNodeName}")
+              node.getParentNode.removeChild(node)
+            }
+          case otherwise => getLog.warn(s"Warning, something else than NodeList found: $otherwise")
         }
 
         writeToFile(xmlDoc)
+      }
     }
     getLog.debug("Finished Transform XML Maven plugin")
   }
@@ -66,7 +68,9 @@ class TransformXmlMojo extends AbstractMojo {
     }
 
     getLog.info("writing to file " + outputXmlPath)
-    transformer.transform(source, new StreamResult(new FileWriter(outputXmlPath)))
+    val outputFile: File = new File(outputXmlPath)
+    outputFile.createNewFile()
+    transformer.transform(source, new StreamResult(new FileWriter(outputFile)))
   }
 
   def loadFile(inputXmlPath: String): Option[Document] = {
