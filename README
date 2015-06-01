@@ -1,13 +1,14 @@
-<project>
-    <modelVersion>4.0.0</modelVersion>
+maven-plugin which can be used to transform xml as part of your build process.
 
-    <groupId>nl.timmybankers.maven</groupId>
-    <artifactId>simple-mvn-project</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+For now only supports deleting of xml element which conform to an xpath query.
 
-    <!--<name>Sample Parameter-less Maven Plugin</name>-->
+usage:
+```
+mvn nl.timmybankers.maven:transform-xml-maven-plugin:1.0-SNAPSHOT:transform-xml -DinputXmlPath="/Users/tim/workspace/api-toolkit/toolkit-http/target/site/cobertura/coverage.xml" -Dxpath="//class[contains(@filename,'.scala')]" -DoutputXmlPath=/tmp/test.xml
+```
 
+maven plugin usage:
+```
     <build>
         <plugins>
             <plugin>
@@ -32,4 +33,4 @@
             </plugin>
         </plugins>
     </build>
-</project>
+```
