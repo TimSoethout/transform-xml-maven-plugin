@@ -22,26 +22,33 @@ class TransformXmlMojo extends AbstractMojo {
   var xpath: String = null
   @Parameter(property = "action")
   var action: String = "DELETE"
+  @Parameter(property = "ignoreFileExceptions")
+  var skipIfNonExisting = false
 
   override def execute(): Unit = {
     getLog.debug("Starting Transform XML Maven plugin")
 
-    val xmlDoc = loadFile(inputXmlPath)
+    val xmlDocOption = loadFile(inputXmlPath)
 
-    val xpathHandler: XPath = XPathFactory.newInstance().newXPath()
+    xmlDocOption match {
+      case None =>
+        if (skipIfNonExisting)
+          getLog.info(s"inputXmlPath `$inputXmlPath` not found. Skipping execution.")
+        else throw new Exception(s"inputXmlPath `$inputXmlPath` not found. Breaking.")
+      case Some(xmlDoc) =>
+        val xpathHandler: XPath = XPathFactory.newInstance().newXPath()
 
-    val pathExpr: XPathExpression = xpathHandler.compile(xpath)
-    val list: NodeList = pathExpr.evaluate(xmlDoc, XPathConstants.NODESET).asInstanceOf[NodeList]
+        val pathExpr: XPathExpression = xpathHandler.compile(xpath)
+        val list: NodeList = pathExpr.evaluate(xmlDoc, XPathConstants.NODESET).asInstanceOf[NodeList]
 
-    for (i <- 0 until list.getLength) {
-      val node: Node = list.item(i)
-      getLog.debug(s"Removing node: ${node.getNodeName}}")
-      node.getParentNode.removeChild(node)
+        for (i <- 0 until list.getLength) {
+          val node: Node = list.item(i)
+          getLog.debug(s"Removing node: ${node.getNodeName}")
+          node.getParentNode.removeChild(node)
+        }
+
+        writeToFile(xmlDoc)
     }
-
-
-    writeToFile(xmlDoc)
-
     getLog.debug("Finished Transform XML Maven plugin")
   }
 
@@ -62,15 +69,21 @@ class TransformXmlMojo extends AbstractMojo {
     transformer.transform(source, new StreamResult(new FileWriter(outputXmlPath)))
   }
 
-  def loadFile(inputXmlPath: String): Document = {
+  def loadFile(inputXmlPath: String): Option[Document] = {
 
+    try {
+      val factory = DocumentBuilderFactory.newInstance()
+      factory.setNamespaceAware(true)
+      val builder = factory.newDocumentBuilder()
+      builder.setEntityResolver(new BlankingResolver())
 
-    val factory = DocumentBuilderFactory.newInstance()
-    factory.setNamespaceAware(true);
-    val builder = factory.newDocumentBuilder();
-    builder.setEntityResolver(new BlankingResolver());
-
-    val xmlDoc: Document = builder.parse(inputXmlPath)
-    xmlDoc
+      val xmlDoc: Document = builder.parse(inputXmlPath)
+      Some(xmlDoc)
+    }
+    catch {
+      case e: Throwable =>
+        getLog.warn(s"Something went wrong with loading the xml file `$inputXmlPath`: ${e.toString}")
+        None
+    }
   }
 }

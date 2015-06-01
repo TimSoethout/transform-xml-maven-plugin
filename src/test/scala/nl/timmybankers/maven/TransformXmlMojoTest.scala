@@ -9,7 +9,8 @@ import scala.xml.{NodeSeq, XML}
 
 class TransformXmlMojoTest extends FlatSpec with ShouldMatchers {
 
-  "execte" should "work with some sample xml" in {
+  behavior of "execute"
+  it should "work with some sample xml" in {
 
     val mojo: TransformXmlMojo = new TransformXmlMojo
     mojo.inputXmlPath = Paths.get(getClass.getResource("/coverage.xml").toURI).toString
@@ -28,6 +29,44 @@ class TransformXmlMojoTest extends FlatSpec with ShouldMatchers {
     val scalaClasses: NodeSeq = xml \\ "class" filter (_.attribute("filename").exists(_.text contains ".scala"))
 
     scalaClasses should be(empty)
+
+    val javaClasses: NodeSeq = xml \\ "class" filter (_.attribute("filename").exists(_.text contains ".java"))
+    javaClasses should have size 1
+
+  }
+
+  it should "work skip with non-existing file when skipping is enabled" in {
+
+    val mojo: TransformXmlMojo = new TransformXmlMojo
+    mojo.inputXmlPath = "/non-existing.xml"
+
+    val outputFile = File.createTempFile("transform-xml-output", ".xml").toString
+    mojo.outputXmlPath = outputFile
+
+    mojo.xpath = "//class[contains(@filename,'.scala')]"
+    mojo.action = "DELETE"
+    mojo.skipIfNonExisting = true
+
+    mojo.execute()
+
+    Files.readAllLines(Paths.get(outputFile)) should be(empty)
+  }
+
+  it should "not work with non-existing file when skipping is disabled" in {
+
+    val mojo: TransformXmlMojo = new TransformXmlMojo
+    mojo.inputXmlPath = "/non-existing.xml"
+
+    val outputFile = File.createTempFile("transform-xml-output", ".xml").toString
+    mojo.outputXmlPath = outputFile
+
+    mojo.xpath = "//class[contains(@filename,'.scala')]"
+    mojo.action = "DELETE"
+    mojo.skipIfNonExisting = false
+
+    intercept[Exception] {
+      mojo.execute()
+    }
   }
 
 }
