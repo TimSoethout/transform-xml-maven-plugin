@@ -17,11 +17,11 @@ import scala.util.{Failure, Success, Try}
 class TransformXmlMojo extends AbstractMojo {
 
   @Parameter(property = "inputXmlPath")
-  var inputXmlPath: String = null
+  var inputXmlPath: String = _
   @Parameter(property = "outputXmlPath")
-  var outputXmlPath: String = null
+  var outputXmlPath: String = _
   @Parameter(property = "xpath")
-  var xpath: String = null
+  var xpath: String = _
   @Parameter(property = "action")
   var action: String = "DELETE"
   @Parameter(property = "skipOnFileErrors")
