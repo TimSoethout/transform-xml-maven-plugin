@@ -7,9 +7,11 @@ import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.{Transformer, TransformerFactory}
 import javax.xml.xpath._
 
-import org.apache.maven.plugin.AbstractMojo
+import org.apache.maven.plugin.{AbstractMojo, MojoFailureException}
 import org.apache.maven.plugins.annotations.{Mojo, Parameter}
 import org.w3c.dom.{Document, Node, NodeList}
+
+import scala.util.{Failure, Success, Try}
 
 @Mojo(name = "transform-xml")
 class TransformXmlMojo extends AbstractMojo {
@@ -31,11 +33,12 @@ class TransformXmlMojo extends AbstractMojo {
     val xmlDocOption = loadFile(inputXmlPath)
 
     xmlDocOption match {
-      case None =>
+
+      case Failure(exception) =>
         if (skipOnFileErrors)
-          getLog.info(s"inputXmlPath `$inputXmlPath` not found. Skipping execution.")
-        else throw new Exception(s"inputXmlPath `$inputXmlPath` not found. Breaking.")
-      case Some(xmlDoc) => {
+          getLog.info(s"inputXmlPath `$inputXmlPath` not found. Skipping plugin execution.", exception)
+        else throw new MojoFailureException(s"inputXmlPath `$inputXmlPath` not found. Breaking.", exception)
+      case Success(xmlDoc) =>
         val pathExpr: XPathExpression = XPathFactory.newInstance().newXPath().compile(xpath)
         val evaluate: AnyRef = pathExpr.evaluate(xmlDoc, XPathConstants.NODESET)
         evaluate match {
@@ -49,7 +52,6 @@ class TransformXmlMojo extends AbstractMojo {
         }
 
         writeToFile(xmlDoc)
-      }
     }
     getLog.debug("Finished Transform XML Maven plugin")
   }
@@ -73,21 +75,14 @@ class TransformXmlMojo extends AbstractMojo {
     transformer.transform(source, new StreamResult(new FileWriter(outputFile)))
   }
 
-  def loadFile(inputXmlPath: String): Option[Document] = {
-
-    try {
+  def loadFile(inputXmlPath: String): Try[Document] = {
+    Try {
       val factory = DocumentBuilderFactory.newInstance()
       factory.setNamespaceAware(true)
       val builder = factory.newDocumentBuilder()
       builder.setEntityResolver(new BlankingResolver())
 
-      val xmlDoc: Document = builder.parse(inputXmlPath)
-      Some(xmlDoc)
-    }
-    catch {
-      case e: Throwable =>
-        getLog.warn(s"Something went wrong with loading the xml file `$inputXmlPath`: ${e.toString}")
-        None
+      builder.parse(inputXmlPath)
     }
   }
 }
