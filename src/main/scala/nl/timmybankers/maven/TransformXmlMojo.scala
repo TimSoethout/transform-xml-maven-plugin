@@ -30,10 +30,9 @@ class TransformXmlMojo extends AbstractMojo {
   override def execute(): Unit = {
     getLog.debug("Starting Transform XML Maven plugin")
 
-    val xmlDocOption = loadFile(inputXmlPath)
+    val xmlDocTry = loadFile(inputXmlPath)
 
-    xmlDocOption match {
-
+    xmlDocTry match {
       case Failure(exception) =>
         if (skipOnFileErrors)
           getLog.info(s"inputXmlPath `$inputXmlPath` not found. Skipping plugin execution.", exception)
