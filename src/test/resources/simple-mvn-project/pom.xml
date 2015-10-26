@@ -3,7 +3,7 @@
 
     <groupId>nl.timmybankers.maven</groupId>
     <artifactId>simple-mvn-project</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <!--<name>Sample Parameter-less Maven Plugin</name>-->
@@ -17,11 +17,11 @@
                 <executions>
                     <execution>
                         <phase>verify</phase>
+                        <goals>
+                            <goal>transform-xml</goal>
+                        </goals>
                     </execution>
                 </executions>
-                <goals>
-                    <goal>transform-xml</goal>
-                </goals>
                 <configuration>
                     <inputXmlPath>${project.build.directory}/site/cobertura/coverage.xml</inputXmlPath>
                     <outputXmlPath>${sonar.build.directore}/coverage-without-scala.xml</outputXmlPath>

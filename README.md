@@ -20,13 +20,13 @@ maven plugin usage:
                 <artifactId>transform-xml-maven-plugin</artifactId>
                 <version>1.0-SNAPSHOT</version>
                 <executions>
-                    <execution>
-                        <phase>verify</phase>
-                    </execution>
+                  <execution>
+                      <phase>verify</phase>
+                      <goals>
+                          <goal>transform-xml</goal>
+                      </goals>
+                  </execution>
                 </executions>
-                <goals>
-                    <goal>transform-xml</goal>
-                </goals>
                 <configuration>
                     <inputXmlPath>${project.build.directory}/site/cobertura/coverage.xml</inputXmlPath>
                     <outputXmlPath>${sonar.build.directore}/coverage-without-scala.xml</outputXmlPath>
